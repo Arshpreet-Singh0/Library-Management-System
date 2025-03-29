@@ -14,36 +14,21 @@ datasource db {
 }
 
 model User {
-  id             String  @id @default(uuid())
+  id             String      @id @default(uuid())
   name           String?
-  email          String  @unique
+  email          String      @unique
   emailVerified  DateTime?
   image          String?
   hashedPassword String?
-  role          String  @default("USER")
-  accounts       Account[]
+  role           UserRole    @default(STUDENT)
   sessions       Session[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  BookIssue      BookIssue[]
+  fine           Float       @default(0.0)
 }
 
-model Account {
-  id                 String  @id @default(uuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String? 
-  access_token       String? 
-  expires_at         Int?     
-  token_type         String?  
-  scope              String?  
-  id_token           String?  
-  session_state      String?  
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
-}
 
 model Session {
   id           String   @id @default(uuid())
@@ -59,4 +44,52 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Book {
+  id              String      @id @default(cuid())
+  title           String
+  isbn            String      @unique
+  description     String?
+  coverImage      String?
+  publishedYear   Int?
+  publisher       String?
+  location        String?
+  totalCopies     Int         @default(1)
+  availableCopies Int         @default(1)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  authors         String[]
+  genre           String
+  bookIssues      BookIssue[]
+}
+
+
+model BookIssue {
+  id         String      @id @default(cuid())
+  book       Book        @relation(fields: [bookId], references: [id], onDelete: Cascade) // Add cascade
+  bookId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade) // Add cascade
+  userId     String
+  issueDate  DateTime    @default(now())
+  dueDate    DateTime
+  returnDate DateTime?
+  status     IssueStatus @default(ACTIVE)
+  fine       Float?      @default(0) // Default fine value
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+enum UserRole {
+  ADMIN
+  LIBRARIAN
+  STUDENT
+  FACULTY
+}
+
+enum IssueStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
+  LOST
 }

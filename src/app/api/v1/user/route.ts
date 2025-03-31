@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
                 role: "STUDENT", // Default role
             }
         });
-        return NextResponse.json({ message: "Signup successfull." }, { status: 201 });
+        return NextResponse.json({ message: "Signup successfull.", success : true }, { status: 201 });
 
     } catch (error) {
         console.error("Error creating user:", error);

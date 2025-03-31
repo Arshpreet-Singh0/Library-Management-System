@@ -13,6 +13,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from "@/hooks/use-toast"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { signIn } from "next-auth/react"
+import axios from "axios"
+import { log } from "util"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -23,6 +25,7 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    name : ""
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,27 +39,29 @@ export default function LoginPage() {
     
     setError("");
 
-    const res = await signIn("credentials", {
-      email : formData.email,
-      password : formData.password,
-      redirect: false, // Prevents auto redirection
-    });
-
-
-    if (res?.error) {
+    try {
+        const res = await axios.post('/api/v1/user',formData);
+        
+    if (res?.data?.success) {
       toast({
-        title: res?.error,
-        description: "Invalid credentials. Try again.",
+        title: res.data?.mesage,
+        description: "login successfull",
         duration : 3000
-      })
-      setError("Invalid credentials. Try again.");
+      });
+      router.push('/login')
+      
     } else {
-      toast({
-        title: "Login Successful",
-        description: "Welcome back!",
-        duration : 3000
-      })
-      router.push("/"); // Redirect on success
+        setError("Invalid credentials. Try again.");
+    }
+    } catch (error) {
+        if(axios.isAxiosError(error)){
+            setError(error?.response?.data?.message || "Invalid credentials. Try again.");
+            toast({
+                title: error?.response?.data?.message,
+                // description: "login successfull",
+                duration : 3000
+              });
+        }
     }
   };
 
@@ -68,11 +73,23 @@ export default function LoginPage() {
       {
         error && <p className="text-red-600 text-center">{error}</p>
       }
-          <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
-          <CardDescription className="text-center">Enter your credentials to access your account</CardDescription>
+          <CardTitle className="text-2xl font-bold text-center">Sign up</CardTitle>
+          <CardDescription className="text-center">Enter your credentials to create your account</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Email</Label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="student name"
+                required
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -144,7 +161,7 @@ export default function LoginPage() {
             <div className="text-center text-sm">
               Don&apos;t have an account?{" "}
               <Link href="/signup" className="text-primary hover:underline">
-                Sign in
+                Sign up
               </Link>
             </div>
           </CardFooter>

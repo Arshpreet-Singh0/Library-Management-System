@@ -7,16 +7,16 @@ export async function GET(
   {
     params,
   }: {
-    params: {
-      id: string;
-    };
+    params: Promise<{
+      isbn : string;
+    }>
   }
 ) {
   try {
-    const { id } = params;
+    const { isbn } = await params;
     const book = await prisma.book.findUnique({
       where: {
-        id,
+        isbn,
       },
     });
 

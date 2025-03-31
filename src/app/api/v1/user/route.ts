@@ -47,16 +47,21 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
 
-        const users = await prisma.user.findMany({
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                image: true,
-            }
+        const body = await req.json();
+
+        const user = await prisma.user.findUnique({
+            where : {
+                email : body.email,
+            },
+            select : {
+                name : true,
+                email : true,
+                role : true,
+                BookIssue : true
+            },
+            
         });
-        return NextResponse.json({ message: "Users retrieved successfully", users, success: true }, { status: 200 });
+        return NextResponse.json({ message: "User found", user, success: true }, { status: 200 });
 
     } catch (error) {
         console.error("Error getting user:", error);

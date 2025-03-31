@@ -12,9 +12,12 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json();
-        const { bookId, userId } = body;
+        const { bookId, userId, issueDays} = body;
+
+        console.log(body);
         
-        if (!bookId || !userId) {
+        
+        if (!bookId || !userId || !issueDays) {
             return NextResponse.json({ message: "Book ID and User ID are required" }, { status: 400 });
         }
 
@@ -23,8 +26,8 @@ export async function POST(req: NextRequest) {
             where: { id: bookId },
         });
 
-        if (!book) {
-            return NextResponse.json({ message: "Book not found" }, { status: 404 });
+        if (!book || book.availableCopies==0) {
+            return NextResponse.json({ message: "Book not found or not available" }, { status: 404 });
         }
         // Check if the user exists
         const user = await prisma.user.findUnique({
@@ -48,12 +51,21 @@ export async function POST(req: NextRequest) {
             data: {
                 bookId,
                 userId,
-                dueDate : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Set due date to 7 days from now
+                dueDate : new Date(Date.now() + Number(issueDays) * 24 * 60 * 60 * 1000), // Set due date to 7 days from now
                 issueDate: new Date(),
             },
         });
+
+        await prisma.book.update({
+            where : {
+                id : bookId
+            },
+            data : {
+                availableCopies : book.availableCopies-1,
+            }
+        })
         
-        return NextResponse.json({ message: "Book issued successfully", issued }, { status: 201 });
+        return NextResponse.json({ message: "Book issued successfully", issued, success : true }, { status: 201 });
     } catch (error) {
         console.error("Error issuing book:", error);
         return NextResponse.json({ message: "Internal server error", error }, { status: 500 });

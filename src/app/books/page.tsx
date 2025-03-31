@@ -67,7 +67,7 @@ export default async function BooksPage() {
                 <span>{book.genre}</span>
               </div>
               <div className="mt-2">
-                {(book.availableCopies !== book.totalCopies) ? (
+                {(book.availableCopies > 0) ? (
                   <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold text-green-700 bg-green-50 border-green-200">
                     Available
                   </span>
@@ -79,7 +79,7 @@ export default async function BooksPage() {
               </div>
             </CardContent>
             <CardFooter className="p-4 pt-0">
-              <Link href={`/books/${book.id}`} className="w-full">
+              <Link href={`/books/${book.isbn}`} className="w-full">
                 <Button variant="outline" className="w-full">
                   <BookOpen className="mr-2 h-4 w-4" />
                   View Details

@@ -43,7 +43,7 @@ export async function POST(req : NextRequest){
             return NextResponse.json({ message: "Book is not issued to student" }, { status: 409 });
         }
         // Return the book
-        const returned = await prisma.bookIssue.update({
+        await prisma.bookIssue.update({
             where: {
                 id: issuedBook.id,
             },

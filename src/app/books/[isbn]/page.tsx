@@ -8,9 +8,9 @@ import axios from "axios";
 import { APP_URL } from "@/config/config";
 import { Book } from "@prisma/client";
 
-const getBook = async(id : string)=>{
+const getBook = async(isbn : string)=>{
     try {
-        const res = await axios.get(`${APP_URL}/api/v1/book/${id}`);
+        const res = await axios.get(`${APP_URL}/api/v1/book/${isbn}`);
 
         return res.data?.book;
     } catch (error) {
@@ -20,9 +20,9 @@ const getBook = async(id : string)=>{
     }
 }
 
-export default async function BookDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const id = (await params).id;
-  const book : Book | null = await getBook(id);
+export default async function BookDetailPage({ params }: { params: Promise<{ isbn: string }> }) {
+  const isbn = (await params).isbn;
+  const book : Book | null = await getBook(isbn);
 
   if(!book){
     return <div>Book not found</div>

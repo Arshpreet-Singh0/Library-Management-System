@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
 
-        const { title, authors, genre, publishedYear, isbn, description, publisher, totalCopies } = body;
+        const { title, authors, genre, publishedYear, isbn, description, coverImage,  publisher, totalCopies } = body;
 
         // Validate all required fields
         if (!title || !authors || !genre || !publishedYear || !isbn || !description || !publisher || !totalCopies) {
@@ -26,18 +26,18 @@ export async function POST(req: NextRequest) {
             data: {
                 title,
                 authors: authorsArray,
-                publishedYear,
+                publishedYear : Number(publishedYear),
                 isbn,
                 genre,
                 description,
                 publisher,
-                totalCopies,
-                availableCopies: totalCopies,
-                coverImage: `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`
+                totalCopies : Number(totalCopies),
+                availableCopies: Number(totalCopies),
+                coverImage: coverImage || `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`
             }
         });
 
-        return NextResponse.json({ message: "Book created successfully", book }, { status: 201 });
+        return NextResponse.json({ message: "Book created successfully", book, success : true }, { status: 201 });
     } catch (error) {
         console.error("Error creating book:", error);
         return NextResponse.json({ message: "Internal server error", error }, { status: 500 });

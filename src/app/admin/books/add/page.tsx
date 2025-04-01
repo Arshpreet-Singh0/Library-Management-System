@@ -128,7 +128,7 @@ export default function AddBookPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="copies">Number of Copies</Label>
-                <Input id="copies" type="number" min="1" defaultValue="1" value={book.totalCopies} onChange={(e) => setBook((b) => ({ ...b, totalCopies: e.target.value }))} required />
+                <Input id="copies" type="number" min="1" value={book.totalCopies} onChange={(e) => setBook((b) => ({ ...b, totalCopies: e.target.value }))} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="location">Shelf Location</Label>

@@ -60,9 +60,9 @@ export default function Navbar() {
                     <Link href="/admin/books" className="text-lg font-medium">
                       Manage Books
                     </Link>
-                    <Link href="/admin/users" className="text-lg font-medium">
+                    {/* <Link href="/admin/users" className="text-lg font-medium">
                       Manage Users
-                    </Link>
+                    </Link> */}
                   </>
                 )}
                 {session?.user && (
@@ -97,9 +97,9 @@ export default function Navbar() {
                 <Link href="/admin/books" className="text-sm font-medium">
                   Manage Books
                 </Link>
-                <Link href="/admin/users" className="text-sm font-medium">
+                {/* <Link href="/admin/users" className="text-sm font-medium">
                   Manage Users
-                </Link>
+                </Link> */}
               </>
             )}
             {session?.user && (

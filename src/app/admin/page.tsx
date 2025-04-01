@@ -1,24 +1,17 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
 import {
   BookOpen,
   Users,
   BookCheck,
-  Search,
   AlertTriangle,
   BarChart3,
-  BookX,
-  ArrowUpRight,
   RefreshCw,
   BookMarked,
 } from "lucide-react"
 import Link from "next/link"
 import axios from "axios"
 import { APP_URL } from "@/config/config"
-import { Book } from "@prisma/client"
-import { Fallback } from "@radix-ui/react-avatar"
 import { Suspense } from "react"
 import RecentActivities from "@/components/admin/RecentActivities"
 import OverdueBooks from "@/components/admin/OverdueBooks"

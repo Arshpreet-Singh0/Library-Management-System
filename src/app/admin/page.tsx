@@ -21,6 +21,7 @@ import { Book } from "@prisma/client"
 import { Fallback } from "@radix-ui/react-avatar"
 import { Suspense } from "react"
 import RecentActivities from "@/components/admin/RecentActivities"
+import OverdueBooks from "@/components/admin/OverdueBooks"
 
 const getData = async()=>{
   console.log("API URL:", `${APP_URL}/api/v1/admin`);
@@ -251,36 +252,9 @@ export default async function AdminDashboard() {
         </Suspense>
 
         {/* Overdue Books */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Overdue Books</CardTitle>
-            <CardDescription>Books that need to be returned</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {overdueBookss.map((book ) => (
-              <div key={book.id} className="flex items-start gap-3 pb-4 border-b last:border-0 last:pb-0">
-                <div className="w-10 h-14 bg-muted flex items-center justify-center rounded">
-                  <BookX className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <div className="flex-grow">
-                  <h4 className="font-medium line-clamp-1">{book.title}</h4>
-                  <p className="text-sm text-muted-foreground">{book.author}</p>
-                  <div className="flex justify-between mt-1 text-sm">
-                    <span>{book.borrower}</span>
-                    <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
-                      {book.daysOverdue} days overdue
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            ))}
-            <Link href="/admin/books/overdue" className="block">
-              <Button variant="outline" size="sm" className="w-full">
-                View All Overdue Books
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <Suspense fallback={<div>Loading...</div>}>
+        <OverdueBooks />
+        </Suspense>
       </div>
 
       {/* Book Management Tabs */}

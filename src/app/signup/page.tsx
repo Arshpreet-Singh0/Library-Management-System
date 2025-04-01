@@ -12,9 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
-import { signIn } from "next-auth/react"
 import axios from "axios"
-import { log } from "util"
 
 export default function LoginPage() {
   const router = useRouter()

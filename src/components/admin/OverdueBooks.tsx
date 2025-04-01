@@ -8,7 +8,8 @@ import { Button } from "../ui/button";
 
 const getoverdueBooks = async()=>{
     try {
-        const res = await axios.get(`${APP_URL}/api/v1/book/return`);
+        const res = await axios.get(`${APP_URL}/api/v1/book/overdue`);
+        
         return res.data?.overdueBooks;
     } catch (error) {
         return [];
@@ -34,7 +35,7 @@ const OverdueBooks = async() => {
             <CardDescription>Books that need to be returned</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {overdueBooks.map((book : Book) => (
+            {overdueBooks.slice(0,5).map((book : Book) => (
               <div key={book.id} className="flex items-start gap-3 pb-4 border-b last:border-0 last:pb-0">
                 <div className="w-10 h-14 bg-muted flex items-center justify-center rounded">
                   <BookX className="h-5 w-5 text-muted-foreground" />

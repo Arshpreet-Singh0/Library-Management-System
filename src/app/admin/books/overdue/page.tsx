@@ -5,76 +5,41 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Search, Mail, RefreshCw } from "lucide-react"
 import Link from "next/link"
+import axios from "axios"
+import { APP_URL } from "@/config/config"
+import { Book } from "@prisma/client"
 
-export default function OverdueBooksPage() {
+const getoverdueBooks = async()=>{
+  try {
+      const res = await axios.get(`${APP_URL}/api/v1/book/overdue`);
+      
+      return res.data?.overdueBooks;
+  } catch (error) {
+      return [];
+  }
+}
+
+interface BookIssue{
+  book : Book,
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  fine: number | null;
+  userId: string;
+  bookId: string;
+  issueDate: Date;
+  dueDate: Date;
+  returnDate: Date | null;
+  status : string;
+  user : {
+    name : string;
+  }
+}
+
+
+export default async function OverdueBooksPage() {
   // Mock data for overdue books
-  const overdueBooks = [
-    {
-      id: "1",
-      title: "1984",
-      author: "George Orwell",
-      isbn: "9780451524935",
-      borrower: "Alice Johnson",
-      borrowerId: "ST12345",
-      email: "alice.j@university.edu",
-      issueDate: "Mar 15, 2025",
-      dueDate: "Mar 22, 2025",
-      daysOverdue: 8,
-      fine: 4.0,
-    },
-    {
-      id: "2",
-      title: "The Catcher in the Rye",
-      author: "J.D. Salinger",
-      isbn: "9780316769488",
-      borrower: "Bob Smith",
-      borrowerId: "ST67890",
-      email: "bob.s@university.edu",
-      issueDate: "Mar 10, 2025",
-      dueDate: "Mar 17, 2025",
-      daysOverdue: 13,
-      fine: 6.5,
-    },
-    {
-      id: "3",
-      title: "Brave New World",
-      author: "Aldous Huxley",
-      isbn: "9780060850524",
-      borrower: "Carol Davis",
-      borrowerId: "ST24680",
-      email: "carol.d@university.edu",
-      issueDate: "Mar 12, 2025",
-      dueDate: "Mar 19, 2025",
-      daysOverdue: 11,
-      fine: 5.5,
-    },
-    {
-      id: "4",
-      title: "Pride and Prejudice",
-      author: "Jane Austen",
-      isbn: "9780141439518",
-      borrower: "David Wilson",
-      borrowerId: "ST13579",
-      email: "david.w@university.edu",
-      issueDate: "Mar 18, 2025",
-      dueDate: "Mar 25, 2025",
-      daysOverdue: 5,
-      fine: 2.5,
-    },
-    {
-      id: "5",
-      title: "The Great Gatsby",
-      author: "F. Scott Fitzgerald",
-      isbn: "9780743273565",
-      borrower: "Emma Brown",
-      borrowerId: "ST97531",
-      email: "emma.b@university.edu",
-      issueDate: "Mar 20, 2025",
-      dueDate: "Mar 27, 2025",
-      daysOverdue: 3,
-      fine: 1.5,
-    },
-  ]
+  const overdueBooks = await getoverdueBooks();
 
   return (
     <div className="space-y-6 w-[80%] mx-auto p-10">
@@ -126,25 +91,33 @@ export default function OverdueBooksPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {overdueBooks.map((book) => (
+            {overdueBooks.map((book : BookIssue) => (
               <TableRow key={book.id}>
                 <TableCell>
                   <div>
-                    <div className="font-medium">{book.title}</div>
-                    <div className="text-sm text-muted-foreground">{book.author}</div>
+                    <div className="font-medium">{book?.book?.title}</div>
+                    <div className="text-sm text-muted-foreground">{book?.book?.authors?.[0]}</div>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div>
-                    <div>{book.borrower}</div>
-                    <div className="text-sm text-muted-foreground">{book.borrowerId}</div>
+                    <div>{book?.user?.name}</div>
+                    {/* <div className="text-sm text-muted-foreground">{book?.user?.name}</div> */}
                   </div>
                 </TableCell>
-                <TableCell>{book.dueDate}</TableCell>
+                <TableCell>{new Date(book.dueDate).toLocaleString("en-IN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })}</TableCell>
                 <TableCell className="text-center">
-                  <Badge variant="destructive" className="bg-red-500/70">{book.daysOverdue} days</Badge>
+                  <Badge variant="destructive" className="bg-red-500/70">{daysOverdue(book)} days</Badge>
                 </TableCell>
-                <TableCell className="text-center ">₹{book.fine.toFixed(2)}</TableCell>
+                <TableCell className="text-center ">₹{book.fine}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button variant="ghost" size="sm" className="h-8">
@@ -167,3 +140,9 @@ export default function OverdueBooksPage() {
   )
 }
 
+const daysOverdue = (book : BookIssue)=>{
+  return Math.max(
+      Math.floor((new Date().getTime() - new Date(book.dueDate).getTime()) / (1000 * 60 * 60 * 24)),
+      0
+    )
+}

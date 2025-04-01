@@ -40,7 +40,8 @@ export async function POST(req: NextRequest) {
         const issuedBook = await prisma.bookIssue.findFirst({
             where: { 
                 bookId,
-                userId
+                userId,
+                returnDate : null
              },
         });
         if (issuedBook) {

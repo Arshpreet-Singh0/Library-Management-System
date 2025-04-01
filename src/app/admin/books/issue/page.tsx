@@ -83,9 +83,16 @@ export default function IssueBookPage() {
         })
       }
     } catch (error) {
-      toast({
-        title : "error fetching user",
-      })
+      if(axios.isAxiosError(error)){
+        toast({
+          title : error.response?.data?.message || "error fetching user",
+        })
+      }
+      else{
+        toast({
+          title : "error fetching user",
+        })
+      }
     }
   }
 

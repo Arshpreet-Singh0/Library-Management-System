@@ -65,8 +65,8 @@ const RecentActivities = async () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {recentActivities.map((activity: Activity) => (
-              <TableRow key={activity.date}>
+            {recentActivities.map((activity: Activity, idx : number) => (
+              <TableRow key={idx}>
                 <TableCell>
                   {activity.activity === "Issued" ? (
                     <Badge

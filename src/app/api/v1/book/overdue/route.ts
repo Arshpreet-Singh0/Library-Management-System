@@ -11,7 +11,8 @@ export async function GET(req : NextRequest){
             include : {
                 user : {
                     select : {name : true}
-                }
+                },
+                book : true
             }
         });
 

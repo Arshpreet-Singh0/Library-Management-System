@@ -13,46 +13,95 @@ import { Textarea } from "@/components/ui/textarea"
 import { CheckCircle, Search } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import axios from "axios"
+import Image from "next/image"
+import { BookIssue } from "@/types/type"
+import { useRouter } from "next/navigation"
 
 export default function ReturnBookPage() {
   const { toast } = useToast()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email , setEmail] = useState("");
+  const [isbn, setIsbn] = useState("");
   const [bookFound, setBookFound] = useState(false)
   const [isOverdue, setIsOverdue] = useState(false)
-  const [fine, setFine] = useState(0)
+  const [fine, setFine] = useState(0);
+  const [book, setBook] = useState<BookIssue | null>(null);
+  const [condition, setCondition] = useState("");
+  const [notes, setNotes] = useState("");
+  const router = useRouter();
 
-  const searchBook = () => {
+  const searchBook = async() => {
+    if(!email || !isbn) return;
     // Simulate API call
-    setTimeout(() => {
-      setBookFound(true)
-      // Randomly determine if book is overdue
-      const overdue = Math.random() > 0.5
-      setIsOverdue(overdue)
-      if (overdue) {
-        // Calculate a random fine between $1 and $10
-        setFine(Number.parseFloat((Math.random() * 9 + 1).toFixed(2)))
+    setIsSubmitting(true);
+    try {
+      const res = await axios.post(`/api/v1/book/return`, {email, isbn});
+
+      if(res?.data?.success && res?.data?.issuedBook){
+        console.log(res?.data?.issuedBook);
+        
+        setBookFound(true);
+        toast({
+          title : res?.data?.message,
+          duration : 3000
+        });
+        setBook(res?.data?.issuedBook);
       }
-    }, 500)
+    } catch (error) {
+      if(axios.isAxiosError(error)){
+        toast({
+          title : error.response?.data?.message || "error while fetching details",
+          duration : 3000
+          });
+      }
+      else{
+        toast({
+          title : "error while fetching details",
+          duration : 3000
+          });
+      }
+
+      
+    }finally{
+      setIsSubmitting(false);
+    }
+    
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false)
-      toast({
-        title: "Book Returned",
-        description: isOverdue
-          ? `The book has been successfully returned. A fine of $${fine.toFixed(2)} has been recorded.`
-          : "The book has been successfully returned.",
-      })
-      // Reset form
-      setBookFound(false)
-      setIsOverdue(false)
-      setFine(0)
-    }, 1500)
+    try {
+      const res = await axios.patch(`/api/v1/book/return`, {email, isbn,
+        condition, notes});
+        if(res?.data?.success){
+          toast({
+            title : res?.data?.message
+            });
+            setTimeout(()=>{
+              router.push('/admin')
+            },3000);
+        }
+
+
+    } catch (error) {
+      if(axios.isAxiosError(error)){
+        toast({
+          title : error.response?.data?.message || "Error while returning book",
+          duration : 3000
+          });
+      }
+      else{
+        toast({
+          title : "Error while returning book",
+          duration : 3000
+          });
+      }
+    }finally{
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -70,44 +119,66 @@ export default function ReturnBookPage() {
               <h3 className="text-lg font-medium">Book Information</h3>
               <div className="flex gap-2">
                 <div className="flex-grow">
-                  <Input placeholder="Enter ISBN, book title, or issue ID" />
+                  <Input placeholder="Enter ISBN of book" value={isbn} onChange={(e) => setIsbn(e.target.value)} />
                 </div>
-                <Button type="button" onClick={searchBook}>
+                <div className="flex-grow">
+                  <Input placeholder="Enter student email" value={email} onChange={(e)=>setEmail(e.target.value)}/>
+                </div>
+
+                
+              </div>
+
+              <Button type="button" onClick={searchBook} className="bg-black w-full text-white">
                   <Search className="h-4 w-4 mr-2" />
                   Search
                 </Button>
-              </div>
 
-              {bookFound && (
+              {bookFound && book && (
                 <Card>
                   <CardContent className="p-4">
                     <div className="flex items-start gap-4">
                       <div className="w-16 h-24 bg-muted flex items-center justify-center">
-                        <span className="text-xs text-muted-foreground">Cover</span>
+                        <Image src={book?.book?.coverImage || ""} alt="cover" height={100} width={100}/>
                       </div>
                       <div className="flex-grow">
-                        <h4 className="font-medium">To Kill a Mockingbird</h4>
-                        <p className="text-sm text-muted-foreground">By Harper Lee</p>
+                        <h4 className="font-medium">{book?.book?.title}</h4>
+                        <p className="text-sm text-muted-foreground">{book?.book?.authors?.[0]}</p>
                         <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
                           <div>
-                            <span className="font-medium">ISBN:</span> 9780061120084
+                            <span className="font-medium">ISBN:</span> {book?.book?.isbn}
                           </div>
                           <div>
-                            <span className="font-medium">Issue ID:</span> ISS-12345
+                            <span className="font-medium">Issue ID:</span> {book?.id}
                           </div>
                           <div>
-                            <span className="font-medium">Borrower:</span> John Doe (ST12345)
+                            <span className="font-medium">Borrower:</span> {book.user?.name}
                           </div>
                           <div>
-                            <span className="font-medium">Issue Date:</span> Mar 22, 2025
+                            <span className="font-medium">Issue Date:</span>{new Date(book?.issueDate).toLocaleString("en-IN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })}
                           </div>
                           <div>
-                            <span className="font-medium">Due Date:</span> Mar 29, 2025
+                            <span className="font-medium">Due Date:</span> {new Date(book?.dueDate).toLocaleString("en-IN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            hour12: true,
+                          })}
                           </div>
                           <div>
                             <span className="font-medium">Status:</span>
-                            {isOverdue ? (
-                              <Badge variant="destructive" className="ml-1">
+                            {new Date(book?.dueDate) < new Date() ? (
+                              <Badge variant="destructive" className="ml-1 bg-red-400">
                                 Overdue
                               </Badge>
                             ) : (
@@ -127,7 +198,7 @@ export default function ReturnBookPage() {
               )}
             </div>
 
-            {bookFound && (
+            {bookFound && book && (
               <>
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium">Return Details</h3>
@@ -138,11 +209,11 @@ export default function ReturnBookPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="book-condition">Book Condition</Label>
-                      <Select defaultValue="good">
+                      <Select defaultValue="good" value={condition} onValueChange={(v)=>setCondition(v)}>
                         <SelectTrigger id="book-condition">
                           <SelectValue placeholder="Select condition" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-white">
                           <SelectItem value="excellent">Excellent</SelectItem>
                           <SelectItem value="good">Good</SelectItem>
                           <SelectItem value="fair">Fair</SelectItem>
@@ -158,11 +229,13 @@ export default function ReturnBookPage() {
                       id="notes"
                       placeholder="Add any notes about the condition of the book or the return process"
                       rows={3}
+                      value={notes}
+                      onChange={(e)=>setNotes(e.target?.value)}
                     />
                   </div>
                 </div>
 
-                {isOverdue && (
+                {new Date(book?.dueDate) < new Date() && (
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Fine Calculation</h3>
                     <Card className="bg-red-50 dark:bg-red-900/20">
@@ -174,11 +247,11 @@ export default function ReturnBookPage() {
                           </div>
                           <div className="flex justify-between">
                             <span>Fine Rate:</span>
-                            <span className="font-medium">$0.50 per day</span>
+                            <span className="font-medium">₹ 10 per day</span>
                           </div>
                           <div className="border-t pt-2 flex justify-between font-bold">
                             <span>Total Fine:</span>
-                            <span>${fine.toFixed(2)}</span>
+                            <span>${10*5}</span>
                           </div>
                         </div>
                       </CardContent>
@@ -217,8 +290,8 @@ export default function ReturnBookPage() {
                         <TableCell>John Doe (ST12345)</TableCell>
                         <TableCell>{new Date().toLocaleDateString()}</TableCell>
                         <TableCell>
-                          {isOverdue ? (
-                            <Badge variant="destructive">Overdue - ${fine.toFixed(2)}</Badge>
+                          {new Date(book?.dueDate) < new Date() ? (
+                            <Badge variant="destructive" className="bg-red-400">Overdue - ${fine.toFixed(2)}</Badge>
                           ) : (
                             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                               On time
@@ -236,7 +309,7 @@ export default function ReturnBookPage() {
             <Button variant="outline" type="button">
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting || !bookFound}>
+            <Button type="submit" disabled={isSubmitting || !bookFound} className="bg-black text-white">
               {isSubmitting ? "Processing Return..." : "Confirm Return"}
             </Button>
           </CardFooter>

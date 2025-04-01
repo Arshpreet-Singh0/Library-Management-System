@@ -1,9 +1,5 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -22,12 +18,21 @@ import Link from "next/link"
 import axios from "axios"
 import { APP_URL } from "@/config/config"
 import { Book } from "@prisma/client"
+import { Fallback } from "@radix-ui/react-avatar"
+import { Suspense } from "react"
+import RecentActivities from "@/components/admin/RecentActivities"
 
 const getData = async()=>{
+  console.log("API URL:", `${APP_URL}/api/v1/admin`);
+
+  
     try {
         const res = await axios.get(`${APP_URL}/api/v1/admin`);
+        console.log(res.data);
+        
         return res.data;
     } catch (error) {
+      
         return null;
     }
 }
@@ -241,66 +246,9 @@ export default async function AdminDashboard() {
       {/* Main Dashboard Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activities */}
-        <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>Recent Activities</CardTitle>
-              <CardDescription>Latest transactions in the library</CardDescription>
-            </div>
-            <Link href="/admin/activities">
-              <Button variant="ghost" size="sm" className="gap-1">
-                View All
-                <ArrowUpRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Activity</TableHead>
-                  <TableHead>Book</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentActivities.map((activity) => (
-                  <TableRow key={activity.id}>
-                    <TableCell>
-                      {activity.type === "issue" ? (
-                        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                          Issued
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                          Returned
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="font-medium">{activity.book}</TableCell>
-                    <TableCell>{activity.user}</TableCell>
-                    <TableCell>{activity.date}</TableCell>
-                    <TableCell>
-                      {activity.type === "issue" ? (
-                        <span className="text-sm">Due: {activity.dueDate}</span>
-                      ) : activity.status === "on-time" ? (
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                          On time
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
-                          Overdue (${activity.fine?.toFixed(2)})
-                        </Badge>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <Suspense fallback={<div>Loading...</div>}>
+        <RecentActivities />
+        </Suspense>
 
         {/* Overdue Books */}
         <Card>

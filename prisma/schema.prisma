@@ -28,8 +28,6 @@ model User {
   fine           Float       @default(0.0)
 }
 
-
-
 model Session {
   id           String   @id @default(uuid())
   sessionToken String   @unique
@@ -64,7 +62,6 @@ model Book {
   bookIssues      BookIssue[]
 }
 
-
 model BookIssue {
   id         String      @id @default(cuid())
   book       Book        @relation(fields: [bookId], references: [id], onDelete: Cascade) // Add cascade
@@ -76,6 +73,8 @@ model BookIssue {
   returnDate DateTime?
   status     IssueStatus @default(ACTIVE)
   fine       Float?      @default(0) // Default fine value
+  condition  String?
+  notes      String?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 }

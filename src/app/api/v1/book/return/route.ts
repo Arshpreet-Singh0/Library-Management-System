@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req : NextRequest){
+export async function PATCH(req : NextRequest){
     try {
         // Check if the user is authenticated and has admin role
         const session = await getServerSession(authOptions);
@@ -12,20 +12,22 @@ export async function POST(req : NextRequest){
         }
 
         const body = await req.json();
-        const { bookId, userId } = body;
-        if (!bookId || !userId) {
+        const { isbn , email, condition, notes } = body;
+        console.log(isbn , email, condition, notes);
+        
+        if (!isbn || !email) {
             return NextResponse.json({ message: "Book ID and User ID are required" }, { status: 400 });
         }
         // Check if the book exists
         const book = await prisma.book.findUnique({
-            where: { id: bookId },
+            where: { isbn },
         });
         if (!book) {
             return NextResponse.json({ message: "Book not found" }, { status: 404 });
         }
         // Check if the user exists
         const user = await prisma.user.findUnique({
-            where: { id: userId },
+            where: { email },
         });
         if (!user) {
             return NextResponse.json({ message: "User not found" }, { status: 404 });
@@ -34,8 +36,8 @@ export async function POST(req : NextRequest){
         // Check if the book is already issued
         const issuedBook = await prisma.bookIssue.findFirst({
             where: {
-                bookId,
-                userId
+                bookId : book.id,
+                userId : user.id
             },
 
         });
@@ -50,6 +52,8 @@ export async function POST(req : NextRequest){
             data: {
                 returnDate: new Date(),
                 status : "RETURNED",
+                notes,
+                condition
             }
         });
         //update fine
@@ -70,7 +74,7 @@ export async function POST(req : NextRequest){
     
             await prisma.user.update({
                 where : {
-                    id : userId
+                    id : user.id
                 },
                 data : {
                     fine : user.fine + fine,
@@ -79,15 +83,15 @@ export async function POST(req : NextRequest){
         }
 
         // Update the book's available copies
-        const updatedBook = await prisma.book.update({
+        await prisma.book.update({
             where: {
-                id: bookId,
+                id: book.id,
             },
             data: {
                 availableCopies : book.availableCopies + 1,
             },
         });
-        return NextResponse.json({ message: "Book returned successfully" }, { status: 200 });
+        return NextResponse.json({ message: "Book returned successfully and fine added to student account if any.", success : true }, { status: 200 });
 
     } catch (error) {
         console.error("Error returning book:", error);
@@ -96,23 +100,51 @@ export async function POST(req : NextRequest){
     }
 }
 
-export async function GET(req : NextRequest){
+export async function POST(req : NextRequest ){
     try {
         const session = await getServerSession(authOptions);
         if (!session || session.user.role !== "ADMIN") {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
 
-        const returnedBooks = await prisma.bookIssue.findMany({
+        const {email, isbn} = await req.json();
+
+        if(!email || !isbn){
+            return NextResponse.json({ message: "Invalid request" }, { status: 400 });
+        }
+
+        const book = await prisma.book.findUnique({
             where: {
-                status : "RETURNED"
+                isbn,
+            }
+        })
+
+        if(!book){
+            return NextResponse.json({ message: "Book not found" }, { status: 404 });
+        }
+
+        const user = await prisma.user.findUnique({
+            where : {
+                email
+            }
+        })
+
+        if(!user){
+            return NextResponse.json({ message: "User not found" }, { status: 404 });
+        }
+
+        const issuedBook = await prisma.bookIssue.findFirst({
+            where: {
+                bookId : book?.id,
+                returnDate : null,
+                userId : user?.id
             },
             include: {
                 book: true,
                 user: true,
             }
         });
-        return NextResponse.json({ message: "Returned books retrieved successfully", returnedBooks, success : true }, { status: 200 });
+        return NextResponse.json({ message: "Book found successfully", issuedBook , success : true }, { status: 200 });
 
     } catch (error) {
         console.error("Error getting returned books:", error);

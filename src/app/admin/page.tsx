@@ -98,7 +98,7 @@ export default async function AdminDashboard() {
           </Card>
         </Link>
 
-        <Link href="/admin/users/add">
+        <Link href="/admin/users">
           <Card className="hover:bg-muted/50 transition-colors">
             <CardContent className="p-4 flex flex-col items-center text-center">
               <Users className="h-8 w-8 mb-2 text-primary" />
@@ -116,7 +116,7 @@ export default async function AdminDashboard() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{books.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{books}</div>
             <div className="flex justify-between mt-2 text-xs">
               <span className="text-muted-foreground">Available: {stats.availableBooks.toLocaleString()}</span>
               <span className="text-muted-foreground">Issued: {stats.issuedBooks.toLocaleString()}</span>

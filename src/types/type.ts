@@ -1,3 +1,23 @@
+
+  
+
+  
+  // Type for a Book Issue
+  export type BookIssue = {
+    id: string;
+    bookId: string;
+    userId: string;
+    issueDate: string;
+    dueDate: Date;
+    returnDate?: string | null;
+    fine: number;
+    status: "ACTIVE" | "RETURNED"; // You can add more statuses if needed
+    createdAt: string;
+    updatedAt: string;
+    book : Book,
+    user : User
+  };
+
 type Book = {
     id: string;
     title: string;
@@ -14,7 +34,7 @@ type Book = {
     updatedAt: string;
     location?: string | null;
   };
-  
+
   // Type for a User
   type User = {
     id: string;
@@ -26,20 +46,4 @@ type Book = {
     fine: number;
     createdAt: string;
     updatedAt: string;
-  };
-  
-  // Type for a Book Issue
-  export type BookIssue = {
-    id: string;
-    bookId: string;
-    userId: string;
-    issueDate: string;
-    dueDate: Date;
-    returnDate?: string | null;
-    fine: number;
-    status: "ACTIVE" | "RETURNED"; // You can add more statuses if needed
-    createdAt: string;
-    updatedAt: string;
-    book : Book,
-    user : User
   };

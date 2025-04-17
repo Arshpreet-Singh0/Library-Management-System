@@ -8,6 +8,7 @@ import {
   BarChart3,
   RefreshCw,
   BookMarked,
+  Loader2,
 } from "lucide-react"
 import Link from "next/link"
 import axios from "axios"
@@ -168,12 +169,12 @@ export default async function AdminDashboard() {
       {/* Main Dashboard Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activities */}
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div className="w-[500px] h-96 flex justify-center items-center"><Loader2 className="animate-spin"/></div>}>
         <RecentActivities />
         </Suspense>
 
         {/* Overdue Books */}
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div className="w-[500px] h-96 flex justify-center items-center"><Loader2 className="animate-spin"/></div>}>
         <OverdueBooks />
         </Suspense>
       </div>
@@ -277,7 +278,7 @@ export default async function AdminDashboard() {
       </Card> */}
 
       {/* Charts and Analytics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Book Circulation</CardTitle>
@@ -312,7 +313,7 @@ export default async function AdminDashboard() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
     </div>
   )
 }

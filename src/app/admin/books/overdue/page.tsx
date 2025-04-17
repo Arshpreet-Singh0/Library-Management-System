@@ -117,7 +117,7 @@ export default async function OverdueBooksPage() {
                 <TableCell className="text-center">
                   <Badge variant="destructive" className="bg-red-500/70">{daysOverdue(book)} days</Badge>
                 </TableCell>
-                <TableCell className="text-center ">₹{book.fine}</TableCell>
+                <TableCell className="text-center ">₹ {getOverdueDetails(book).fine}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button variant="ghost" size="sm" className="h-8">
@@ -146,3 +146,13 @@ const daysOverdue = (book : BookIssue)=>{
       0
     )
 }
+
+const getOverdueDetails = (book: BookIssue) => {
+  const days = Math.max(
+    Math.floor((new Date().getTime() - new Date(book.dueDate).getTime()) / (1000 * 60 * 60 * 24)),
+    0
+  );
+  const finePerDay = 10; // ₹5 per day
+  const fine = days * finePerDay;
+  return { days, fine };
+};

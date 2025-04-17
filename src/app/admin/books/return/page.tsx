@@ -243,7 +243,7 @@ export default function ReturnBookPage() {
                         <div className="space-y-2">
                           <div className="flex justify-between">
                             <span>Days Overdue:</span>
-                            <span className="font-medium">{Math.floor(Math.random() * 10) + 1} days</span>
+                            <span className="font-medium">{getOverdueDetails(book).days} days</span>
                           </div>
                           <div className="flex justify-between">
                             <span>Fine Rate:</span>
@@ -251,7 +251,7 @@ export default function ReturnBookPage() {
                           </div>
                           <div className="border-t pt-2 flex justify-between font-bold">
                             <span>Total Fine:</span>
-                            <span>${10*5}</span>
+                            <span>₹ {getOverdueDetails(book).fine}</span>
                           </div>
                         </div>
                       </CardContent>
@@ -291,7 +291,7 @@ export default function ReturnBookPage() {
                         <TableCell>{new Date().toLocaleDateString()}</TableCell>
                         <TableCell>
                           {new Date(book?.dueDate) < new Date() ? (
-                            <Badge variant="destructive" className="bg-red-400">Overdue - ${fine.toFixed(2)}</Badge>
+                            <Badge variant="destructive" className="bg-red-400">Overdue - ₹ {getOverdueDetails(book).fine}</Badge>
                           ) : (
                             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                               On time
@@ -319,3 +319,12 @@ export default function ReturnBookPage() {
   )
 }
 
+const getOverdueDetails = (book: BookIssue) => {
+  const days = Math.max(
+    Math.floor((new Date().getTime() - new Date(book.dueDate).getTime()) / (1000 * 60 * 60 * 24)),
+    0
+  );
+  const finePerDay = 10; // ₹5 per day
+  const fine = days * finePerDay;
+  return { days, fine };
+};

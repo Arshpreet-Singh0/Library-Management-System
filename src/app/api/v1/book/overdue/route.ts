@@ -16,6 +16,9 @@ export async function GET(req : NextRequest){
             }
         });
 
+        console.log(overdueBooks);
+        
+
         return NextResponse.json({overdueBooks, success : true});
     } catch (error) {
         return NextResponse.json({message : "error while fetching data"}, {status : 500});

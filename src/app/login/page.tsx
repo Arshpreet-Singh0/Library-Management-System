@@ -32,9 +32,9 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("submitted");
     
     setError("");
+    setIsLoading(true);
 
     const res = await signIn("credentials", {
       email : formData.email,
@@ -58,6 +58,7 @@ export default function LoginPage() {
       })
       router.push("/"); // Redirect on success
     }
+    setIsLoading(false);
   };
 
   return (

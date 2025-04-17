@@ -33,7 +33,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("submitted");
+    setIsLoading(true);
     
     setError("");
 
@@ -42,8 +42,8 @@ export default function LoginPage() {
         
     if (res?.data?.success) {
       toast({
-        title: res.data?.mesage,
-        description: "login successfull",
+        title: res.data?.mesage || "Signup successfull.",
+        description: "Please continue with login.",
         duration : 3000
       });
       router.push('/login')
@@ -60,6 +60,8 @@ export default function LoginPage() {
                 duration : 3000
               });
         }
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -157,9 +159,9 @@ export default function LoginPage() {
               )}
             </Button>
             <div className="text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-primary hover:underline">
-                Sign up
+              Already have an account?{" "}
+              <Link href="/login" className="text-primary hover:underline">
+                Login
               </Link>
             </div>
           </CardFooter>

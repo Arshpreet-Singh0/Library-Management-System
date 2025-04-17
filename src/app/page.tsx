@@ -109,7 +109,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="container mx-auto px-4 ">
+      {/* <section className="container mx-auto px-4 ">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Features & Services</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -318,10 +318,10 @@ export default function Home() {
             </CardFooter>
           </Card>
         </div>
-      </section>
+      </section> */}
 
       {/* How It Works Section */}
-      <section className="container mx-auto px-4 w-[80%] ">
+      {/* <section className="container mx-auto px-4 w-[80%] ">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">How It Works</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -366,7 +366,7 @@ export default function Home() {
             <Button size="lg">Create Your Account</Button>
           </Link>
         </div>
-      </section>
+      </section> */}
 
       {/* New Arrivals Section */}
       {/* <section className="container mx-auto px-4">
@@ -416,7 +416,7 @@ export default function Home() {
       </section> */}
 
       {/* Announcements Section */}
-      <section className="container w-[80%] mx-auto px-4">
+      {/* <section className="container w-[80%] mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <div>
             <h2 className="text-3xl font-bold">Library Announcements</h2>
@@ -471,7 +471,7 @@ export default function Home() {
             </CardFooter>
           </Card>
         </div>
-      </section>
+      </section> */}
 
       {/* Testimonials Section */}
       <section className="container mx-auto px-4 w-[80%]">
@@ -561,8 +561,8 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t pt-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="container mx-auto px-4 ">
+          <div className="flex justify-between w-[60%] mx-auto">
             <div>
               <h3 className="font-bold text-lg mb-4">Library Hours</h3>
               <ul className="space-y-2">
@@ -585,7 +585,7 @@ export default function Home() {
               </ul>
             </div>
 
-            <div>
+            {/* <div>
               <h3 className="font-bold text-lg mb-4">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
@@ -594,28 +594,28 @@ export default function Home() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/research" className="hover:underline">
+                  <Link href="#" className="hover:underline">
                     Research Resources
                   </Link>
                 </li>
                 <li>
-                  <Link href="/events" className="hover:underline">
+                  <Link href="#" className="hover:underline">
                     Library Events
                   </Link>
                 </li>
                 <li>
-                  <Link href="/faq" className="hover:underline">
+                  <Link href="#" className="hover:underline">
                     FAQs
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact" className="hover:underline">
+                  <Link href="#" className="hover:underline">
                     Contact Us
                   </Link>
                 </li>
               </ul>
-            </div>
-
+            </div> */}
+{/* 
             <div>
               <h3 className="font-bold text-lg mb-4">Resources</h3>
               <ul className="space-y-2">
@@ -645,15 +645,15 @@ export default function Home() {
                   </Link>
                 </li>
               </ul>
-            </div>
+            </div> */}
 
             <div>
               <h3 className="font-bold text-lg mb-4">Contact</h3>
               <address className="not-italic space-y-2">
-                <p>University Library</p>
-                <p>123 Campus Drive</p>
-                <p>College Town, CT 12345</p>
-                <p className="mt-4">Phone: (123) 456-7890</p>
+                <p>Chandigarh University Library</p>
+                <p>Mohali, Punjab</p>
+                {/* <p>College Town, CT 12345</p> */}
+                <p className="mt-4">Phone: 8872571023</p>
                 <p>Email: library@university.edu</p>
               </address>
             </div>

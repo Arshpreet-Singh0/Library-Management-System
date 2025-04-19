@@ -128,13 +128,13 @@ export default function Navbar() {
               <DropdownMenuContent align="end" className="bg-white">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push("/profile")}>Profile</DropdownMenuItem>
+                {/* <DropdownMenuItem onClick={() => router.push("/profile")}>Profile</DropdownMenuItem> */}
                 <DropdownMenuItem onClick={() => router.push("/my-books")}>My Books</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push("/my-books/fines")}>
                   <DollarSign className="mr-2 h-4 w-4" />
                   My Fines
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push("/settings")}>Settings</DropdownMenuItem>
+                {/* <DropdownMenuItem onClick={() => router.push("/settings")}>Settings</DropdownMenuItem> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
               </DropdownMenuContent>

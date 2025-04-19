@@ -32,7 +32,7 @@ A modern and efficient **Library Management System** built using **Next.js**, de
    ```
 2. Install dependencies
    ```
-   npm istall -r pnpm
+   npm istall -g pnpm
    pnpm install
    ```
 
